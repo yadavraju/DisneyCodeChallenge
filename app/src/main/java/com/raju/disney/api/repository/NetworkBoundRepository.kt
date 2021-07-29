@@ -1,4 +1,4 @@
-package co.betterup.betterfeed.api.repository
+package com.raju.disney.api.repository
 
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response

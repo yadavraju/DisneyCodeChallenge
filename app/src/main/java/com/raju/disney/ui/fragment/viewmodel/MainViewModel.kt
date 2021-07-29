@@ -3,7 +3,7 @@ package com.raju.disney.ui.fragment.viewmodel
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import com.raju.disney.api.repository.GiphyRepository
+import com.raju.disney.api.repository.BookRepository
 import com.raju.disney.base.BaseViewModel
 import com.raju.disney.data.GData
 import com.raju.disney.ui.adapter.CommonAdapter
@@ -21,9 +21,9 @@ const val TAG: String = "MainViewModel"
 class MainViewModel
 @Inject
 constructor(
-    private val repository: GiphyRepository,
-    private val adapter: CommonAdapter,
-    private val appFactory: AppFactory
+  private val repository: BookRepository,
+  private val adapter: CommonAdapter,
+  private val appFactory: AppFactory
 ) : BaseViewModel() {
 
   private val adapterObservableField: ObservableField<CommonAdapter> = ObservableField()

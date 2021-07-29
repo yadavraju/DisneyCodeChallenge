@@ -2,7 +2,7 @@ package com.raju.disney.injection
 
 import com.google.gson.GsonBuilder
 import com.raju.disney.BuildConfig
-import com.raju.disney.api.GiphyApi
+import com.raju.disney.api.BookApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,13 +46,13 @@ class NetworkModule {
   fun provideImagesApi(
       httpClient: OkHttpClient,
       gsonConverterFactory: GsonConverterFactory
-  ): GiphyApi {
+  ): BookApi {
     val retrofit =
         Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(gsonConverterFactory)
             .client(httpClient)
             .build()
-    return retrofit.create(GiphyApi::class.java)
+    return retrofit.create(BookApi::class.java)
   }
 }

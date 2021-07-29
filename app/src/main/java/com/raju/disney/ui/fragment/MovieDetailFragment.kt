@@ -23,7 +23,6 @@ class MovieDetailFragment : BaseFragment() {
     viewModel.fetchBook(1308)
     viewModel.showDownloadDialog.observeEvent(this, this::openPopUpDialogFragment)
     viewModel.showErrorMessage.observeEvent(this, this::showErrorMessage)
-
   }
 
   override fun onCreateView(
@@ -31,11 +30,10 @@ class MovieDetailFragment : BaseFragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?
   ): View {
-    // Inflate the layout for this fragment
     val binding =
         FragmentMovieDetailBinding.inflate(LayoutInflater.from(activity), container, false)
     binding.viewModel = viewModel
-    return binding.root // inflater.inflate(R.layout.fragment_movie_detail, container, false)
+    return binding.root
   }
 
   private fun showErrorMessage(message: String?) {

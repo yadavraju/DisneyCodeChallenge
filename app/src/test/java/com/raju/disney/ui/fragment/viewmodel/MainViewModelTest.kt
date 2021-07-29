@@ -2,7 +2,7 @@ package com.raju.disney.ui.fragment.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.raju.disney.TestCoroutineRule
-import com.raju.disney.api.repository.GiphyRepository
+import com.raju.disney.api.repository.BookRepository
 import com.raju.disney.data.GiphyData
 import com.raju.disney.ui.adapter.CommonAdapter
 import com.raju.disney.ui.factory.AppFactory
@@ -25,7 +25,7 @@ class MainViewModelTest {
 
   @get:Rule val testCoroutineRule = TestCoroutineRule()
 
-  @Mock private lateinit var repository: GiphyRepository
+  @Mock private lateinit var repository: BookRepository
 
   @Mock private lateinit var adapter: CommonAdapter
 
@@ -43,8 +43,8 @@ class MainViewModelTest {
   @Test
   fun searchGiphy() {
     testCoroutineRule.runBlockingTest {
-      Mockito.doReturn(giphyDataFlow).`when`(repository).searchGiphy("test")
-      testObject.fetchBook("test")
+      Mockito.doReturn(giphyDataFlow).`when`(repository).getBookData(1308)
+      testObject.fetchBook(1308)
       assertEquals(true, testObject.isLoading().get())
     }
   }
