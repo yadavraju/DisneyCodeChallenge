@@ -1,0 +1,9 @@
+<resources>
+  <string name="app_name">DisneyCodeTest</string>
+  <string name="search_hint">Search Giphy</string>
+  <string name="save_gif">Save Gif</string>
+  <string name="cancel">Cancel</string>
+  <string name="confirmation_message">Are you sure want to save this giphy?</string>
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
