@@ -1,6 +1,7 @@
 package com.raju.disney.ui.factory
 
-import com.raju.disney.data.GData
+import com.raju.disney.data.BookData
+import com.raju.disney.data.ImageThumbUri
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -20,8 +21,6 @@ class AppFactoryTest {
 
   @Test
   fun createGiphyAdapter() {
-    assertNotNull(testObject.createGiphyAdapter(GData(), ::onItemClicked))
+    assertNotNull(testObject.createCharacterAdapter(ImageThumbUri()))
   }
-
-  private fun onItemClicked(uri: String?) {}
 }

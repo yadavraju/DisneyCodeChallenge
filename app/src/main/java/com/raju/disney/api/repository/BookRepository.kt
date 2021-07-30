@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class BookRepository @Inject constructor(private val api: BookApi) {
 
   fun getBookData(comicId: Int): Flow<BookData> {

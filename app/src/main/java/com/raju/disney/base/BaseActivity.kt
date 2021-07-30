@@ -1,4 +1,4 @@
-package co.betterup.betterfeed.base
+package com.raju.disney.base
 
 import androidx.appcompat.app.AppCompatActivity
 

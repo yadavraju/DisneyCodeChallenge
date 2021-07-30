@@ -6,6 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class BookData(
+    @SerializedName("status") val status : String = "",
     @SerializedName("attributionHTML") val attributionHTML: String = "",
     @SerializedName("attributionText") val attributionText: String = "",
     @SerializedName("copyright") val copyright: String = "",
@@ -22,7 +23,7 @@ data class Result(
     @SerializedName("digitalId") val digitalId: Int = 0,
     @SerializedName("format") val format: String = "",
     @SerializedName("id") val id: Int = 0,
-    @SerializedName("images") val images: List<ImageThumbUri> = listOf(),
+    @SerializedName("images") val characterImages: List<ImageThumbUri> = listOf(),
     @SerializedName("isbn") val isbn: String = "",
     @SerializedName("issueNumber") val issueNumber: Int = 0,
     @SerializedName("modified") val modified: String = "",
@@ -44,5 +45,11 @@ data class ImageThumbUri(
     @SerializedName("extension") val extension: String = "",
     @SerializedName("path") val path: String = ""
 ) : Parcelable {
-  val imageThumbUri: String = path + extension
+    val imageThumbUri: String
+        get() {
+            if(path.isNotEmpty() && extension.isNotEmpty()) {
+                return "$path.$extension"
+            }
+            return ""
+        }
 }

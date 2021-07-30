@@ -3,6 +3,8 @@ package com.raju.disney
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.gson.GsonBuilder
 import com.raju.disney.api.BookApi
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -40,12 +42,13 @@ class BookApiTest {
   }
 
   @Test
-  fun getPostsTest() = runBlocking {
-    enqueueResponse("mock_giphy_search_response.json")
-    //val response = service.searchGiphy("Android", limit = 1)
+  fun getBookDataTest() = runBlocking {
+    enqueueResponse("mock_book_data_response.json")
+    val response = service.getBookData(1308)
 
-    //assertNotNull(response)
-    //Assert.assertEquals(response.giphyGDataList.size, 1)
+    assertNotNull(response)
+    assertEquals(response.status, "Ok")
+    assertEquals(response.data.results.size, 1)
   }
 
   private fun enqueueResponse(fileName: String, headers: Map<String, String> = emptyMap()) {

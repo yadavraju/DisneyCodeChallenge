@@ -1,11 +1,11 @@
 package com.raju.disney.ui.fragment.viewmodel
 
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.raju.disney.api.repository.BookRepository
 import com.raju.disney.base.BaseViewModel
-import com.raju.disney.data.GData
+import com.raju.disney.data.BookData
+import com.raju.disney.data.ImageThumbUri
 import com.raju.disney.ui.adapter.CommonAdapter
 import com.raju.disney.ui.factory.AppFactory
 import com.raju.disney.util.SingleLiveEvent
@@ -18,19 +18,17 @@ import kotlinx.coroutines.launch
 const val TAG: String = "MainViewModel"
 
 @HiltViewModel
-class MainViewModel
-@Inject
-constructor(
-  private val repository: BookRepository,
-  private val adapter: CommonAdapter,
-  private val appFactory: AppFactory
+class MovieDetailViewModel @Inject constructor(
+    private val repository: BookRepository,
+    private val adapter: CommonAdapter,
+    private val appFactory: AppFactory
 ) : BaseViewModel() {
 
-  private val adapterObservableField: ObservableField<CommonAdapter> = ObservableField()
+  private val characterAdapterObservableField: ObservableField<CommonAdapter> = ObservableField()
   private val loadingObservableField: ObservableField<Boolean> = ObservableField()
 
   val showErrorMessage: SingleLiveEvent<String?> by lazy { SingleLiveEvent() }
-  val showDownloadDialog: SingleLiveEvent<String?> by lazy { SingleLiveEvent() }
+  val displayBookData: SingleLiveEvent<BookData> by lazy { SingleLiveEvent() }
 
   fun fetchBook(comicId: Int) {
     viewModelScope.launch {
@@ -39,28 +37,24 @@ constructor(
           .getBookData(comicId)
           .catch { e -> handleException(TAG, e, loadingObservableField) }
           .collect {
-            loadingObservableField.set(true)
-            Log.e("raju", it.toString())
+            displayBookData.value = it
+            setCharacterAdapterData(it.data.results[0].characterImages)
+            loadingObservableField.set(false)
           }
     }
   }
 
-  private fun setAdapterData(giphyGDataList: List<GData>) {
-    val viewModels = giphyGDataList.map { appFactory.createGiphyAdapter(it, ::onImageLongPress) }
+  fun setCharacterAdapterData(characterImages: List<ImageThumbUri>) {
+    val viewModels = characterImages.map { appFactory.createCharacterAdapter(it) }
     adapter.setDataBoundAdapter(viewModels)
-    adapterObservableField.set(adapter)
-    loadingObservableField.set(false)
+    characterAdapterObservableField.set(adapter)
   }
-
-  private fun onImageLongPress(uri: String?) {
-    showDownloadDialog.value = uri
-  }
-
-  fun getViewModelAdapter(): ObservableField<CommonAdapter> = adapterObservableField
-
-  fun isLoading(): ObservableField<Boolean> = loadingObservableField
 
   override fun showExceptionMessage(message: String?) {
     showErrorMessage.value = message
   }
+
+  fun getCharacterAdapter(): ObservableField<CommonAdapter> = characterAdapterObservableField
+
+  fun isLoading(): ObservableField<Boolean> = loadingObservableField
 }

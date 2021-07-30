@@ -1,9 +1,8 @@
 package com.raju.disney.ui.activity
 
 import android.os.Bundle
-import co.betterup.betterfeed.base.BaseActivity
+import com.raju.disney.base.BaseActivity
 import com.raju.disney.R
-import com.raju.disney.ui.fragment.MainFragment
 import com.raju.disney.ui.fragment.MovieDetailFragment
 import dagger.hilt.android.AndroidEntryPoint
 

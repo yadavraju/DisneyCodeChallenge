@@ -1,10 +1,10 @@
 package com.raju.disney.ui.adapter
 
 import android.view.View
-import com.raju.disney.data.GData
-import com.raju.disney.ui.viewholder.GiphyViewHolder
+import com.raju.disney.data.ImageThumbUri
+import com.raju.disney.ui.viewholder.CharacterViewHolder
 import junit.framework.Assert.assertEquals
-import org.junit.Assert
+import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,33 +14,30 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
-class GiphyAdapterTest {
+class CharacterAdapterTest {
 
-  private lateinit var testObject: GiphyAdapter
+  private lateinit var testObject: CharacterAdapter
 
   @Before
   fun setUp() {
-    fun itemClicked(s: String?) {
-    }
-    testObject = GiphyAdapter(GData(), ::itemClicked)
+    testObject = CharacterAdapter(ImageThumbUri())
   }
 
   @Test
   fun createItemViewHolder() {
     val view  = mock<View> {  }
-    Assert.assertNotNull(testObject.createItemViewHolder(view))
+    assertNotNull(testObject.createItemViewHolder(view))
   }
 
   @Test
   fun bindItemViewHolder() {
-    val holder = mock<GiphyViewHolder> {  }
+    val holder = mock<CharacterViewHolder> {  }
     testObject.bindItemViewHolder(holder)
-
-    verify(holder).bind(any(), any())
+    verify(holder).bind(any())
   }
 
   @Test
   fun getViewType() {
-    assertEquals(ViewType.GIPHY_IMAGE, testObject.viewType)
+    assertEquals(ViewType.CHARACTER_IMAGE, testObject.viewType)
   }
 }
