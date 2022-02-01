@@ -17,7 +17,7 @@ jobs:
       run: git checkout -b release/v${{ github.event.inputs.versionName }}
     - name: Initialize mandatory git config
       run: |
-       git config user.name "${{ github.event.user.name }}"
+       git config user.name ${{ github.actor }}
        git config user.email razuyadav93@gmail.com
     - name: Change version number and name
       run: printf 'ext.version_name = "${{ github.event.inputs.versionName }}"\n' > app_versions.gradle
