@@ -52,8 +52,6 @@ class FlightActivityViewModel @Inject constructor(private val repository: Flight
                         )
                     }
                     textMapPropagator.inject(Context.current(), map, setter1)
-                    Log.e("Raju", "map1 " + map.keys)
-                    Log.e("Raju", "map1 " + map.values)
                     span.addEvent("Loading api data")
                     loadingObservableField.set(true)
                     repository.getFlightData(map)

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.raju.disney.R
+import com.raju.disney.base.BaseActivity
 import com.raju.disney.data.FlightData
 import com.raju.disney.opentelemetry.OtelConfiguration
 import com.raju.disney.opentelemetry.OtelConfiguration.createChildSpan
@@ -22,20 +23,11 @@ import java.net.HttpURLConnection
 
 
 @AndroidEntryPoint
-class FlightActivity : AppCompatActivity() {
+class FlightActivity : BaseActivity() {
     private val otelConfiguration = getOpenTelemetry()
     private val tracer: Tracer = otelConfiguration.getTracer("FlightActivity")
     private val parentSpan = tracer.createSpan("FlightActivity:api:request")
     private val viewModel: FlightActivityViewModel by viewModels()
-//    private val textMapPropagator = OtelConfiguration.getTextMapPropagator()
-//    private val setter =
-//        TextMapSetter { httpURLConnection: HttpURLConnection?, key: String?, value: String? ->
-//            httpURLConnection?.setRequestProperty(
-//                key,
-//                value
-//            )
-//        }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +36,6 @@ class FlightActivity : AppCompatActivity() {
             parentSpan.makeCurrent().use {
                 val propagators: ContextPropagators = otelConfiguration.propagators
                 val textMapPropagator = propagators.textMapPropagator
-
-                //textMapPropagator.inject(Context.current(), null, setter)
-                Log.e("Raju", "spanContext " + parentSpan.spanContext)
-                Log.e("Raju", "traceId: " + parentSpan.spanContext.traceId)
-                Log.e("Raju", "spanId: " + parentSpan.spanContext.spanId)
-                Log.e("Raju", "traceFlags: " + parentSpan.spanContext.traceFlags)
-                Log.e("Raju", "traceFlags: " + parentSpan.spanContext.traceState)
 
                 val map: MutableMap<String, String> = HashMap()
                 val setter1 = TextMapSetter<MutableMap<String, String>> { map, key, value ->
