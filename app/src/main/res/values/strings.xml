@@ -1,6 +1,8 @@
 <resources>
-  <string name="app_name">DisneyCodeTest</string>
-  <string name="format_and_isbn">Format: %1$s, ISBN: %2$s</string>
-  <string name="description_title">Description</string>
-  <string name="character_title">Characters</string>
+    <string name="app_name">DisneyCodeTest</string>
+    <string name="format_and_isbn">Format: %1$s, ISBN: %2$s</string>
+    <string name="description_title">Description</string>
+    <string name="character_title">Characters</string>
+    <string name="trace_with_backend_instrumented">Trace With Backend Instrumented</string>
+    <string name="trace_without_backend_instrumented">Trace Without Backend Instrumented</string>
 </resources>

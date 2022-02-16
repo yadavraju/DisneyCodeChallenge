@@ -55,7 +55,7 @@ class MovieDetailViewModelTest {
   @Test
   fun setCharacterAdapterData() {
     val characterList = listOf(ImageThumbUri("jpg", "testUrl"), ImageThumbUri("jpg", "testUrl1"))
-    testObject.setCharacterAdapterData(characterList)
+    //testObject.setCharacterAdapterData(characterList, null)
     verify(adapter).setDataBoundAdapter(any())
     assertNotNull(testObject.getCharacterAdapter())
   }

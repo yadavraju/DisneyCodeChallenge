@@ -6,14 +6,25 @@ plugins {
     id 'kotlin-kapt'
 }
 
+ext {
+    openTelemetryVersion = "1.10.1"
+    openTelemetryAlphaVersion = "1.10.1-alpha"
+
+    grpcVersion = '1.34.1'
+    protobufVersion = '3.11.4'
+    protocVersion = protobufVersion
+}
+
+println("Building against OpenTelemetry version: $openTelemetryVersion")
+
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.raju.disney"
-        minSdkVersion 23
-        targetSdkVersion 30
+        minSdkVersion 24
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
@@ -53,26 +64,30 @@ dependencies {
     //Todo For now I am adding directly here
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
-    implementation 'androidx.fragment:fragment-ktx:1.3.6'
-    implementation 'androidx.core:core-ktx:1.7.0-alpha01'
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
+    implementation 'androidx.core:core-ktx:1.8.0-alpha04'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
     // Architecture Components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.4.1"
 
     // Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
 
     //networking
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
@@ -84,13 +99,13 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     //imaging
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Testing
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3"
-    testImplementation "com.squareup.okhttp3:mockwebserver:4.4.0"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.2"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     testImplementation 'org.mockito:mockito-core:3.9.0'
     androidTestImplementation 'org.mockito:mockito-android:3.9.0'
@@ -100,6 +115,26 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+
+    implementation platform("io.opentelemetry:opentelemetry-bom:${openTelemetryVersion}")
+    implementation platform("io.opentelemetry:opentelemetry-bom-alpha:${openTelemetryAlphaVersion}")
+    implementation platform("io.grpc:grpc-bom:${grpcVersion}")
+    implementation("io.opentelemetry:opentelemetry-api")
+    implementation("io.opentelemetry:opentelemetry-sdk")
+    implementation("io.opentelemetry:opentelemetry-exporter-jaeger")
+    implementation("io.opentelemetry:opentelemetry-extension-annotations")
+    implementation("io.opentelemetry:opentelemetry-exporter-logging")
+    implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+
+    //pull in the autoconfigure extension so we parse the `otel.resource.attributes` system property used in the example.
+    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
+    implementation("io.opentelemetry:opentelemetry-sdk-metrics")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
+
+    //alpha modules
+    implementation("io.opentelemetry:opentelemetry-semconv")
+    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
 }
 
 kapt {

@@ -1,65 +1,72 @@
-package com.raju.disney.ui.fragment.viewmodel
+package com.raju.disney.ui.activity.viewmodel
 
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import com.raju.disney.api.repository.BookRepository
+import com.raju.disney.api.repository.FlightRepository
 import com.raju.disney.base.BaseViewModel
-import com.raju.disney.data.BookData
-import com.raju.disney.data.ImageThumbUri
+import com.raju.disney.data.FlightData
 import com.raju.disney.opentelemetry.OtelConfiguration
 import com.raju.disney.opentelemetry.OtelConfiguration.createSpan
-import com.raju.disney.ui.adapter.CommonAdapter
-import com.raju.disney.ui.factory.AppFactory
 import com.raju.disney.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
-import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
+import io.opentelemetry.context.Context
+import io.opentelemetry.context.propagation.ContextPropagators
+import io.opentelemetry.context.propagation.TextMapSetter
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-const val TAG: String = "MainViewModel"
+const val TAG: String = "FlightActivityViewModel"
 
 @HiltViewModel
-class MovieDetailViewModel @Inject constructor(
-    private val repository: BookRepository,
-    private val adapter: CommonAdapter,
-    private val appFactory: AppFactory
-) : BaseViewModel() {
+class FlightActivityViewModel @Inject constructor(private val repository: FlightRepository) :
+    BaseViewModel() {
 
-    private val characterAdapterObservableField: ObservableField<CommonAdapter> = ObservableField()
+    private val otelConfiguration = OtelConfiguration.getOpenTelemetry()
+    private val tracer: Tracer = otelConfiguration.getTracer("FlightActivity")
+    private val span: Span = tracer.createSpan("FlightActivityViewModel:api:http_request")
+
     private val loadingObservableField: ObservableField<Boolean> = ObservableField()
-
     val showErrorMessage: SingleLiveEvent<String?> by lazy { SingleLiveEvent() }
-    val displayBookData: SingleLiveEvent<BookData> by lazy { SingleLiveEvent() }
-    private val tracer: Tracer = OtelConfiguration.getTracer("app:MainActivity")
-    private val span: Span = tracer.createSpan("MovieDetailViewModel:api:http_request")
+    val displayFlightData: SingleLiveEvent<FlightData> by lazy { SingleLiveEvent() }
 
-    fun fetchBook(comicId: Int) {
+    fun fetchFlightData() {
         viewModelScope.launch {
             try {
                 span.makeCurrent().use {
+                    val propagators: ContextPropagators = otelConfiguration.propagators
+                    val textMapPropagator = propagators.textMapPropagator
+
+                    val map: MutableMap<String, String> = HashMap()
+                    val setter1 = TextMapSetter<MutableMap<String, String>> { map, key, value ->
+                        map?.set(
+                            key,
+                            value
+                        )
+                    }
+                    textMapPropagator.inject(Context.current(), map, setter1)
+                    Log.e("Raju", "map1 " + map.keys)
+                    Log.e("Raju", "map1 " + map.values)
                     span.addEvent("Loading api data")
                     loadingObservableField.set(true)
-                    repository
-                        .getBookData(comicId)
+                    repository.getFlightData(map)
                         .catch { e ->
                             handleException(TAG, e, loadingObservableField)
                             val attributes = Attributes.of(
                                 AttributeKey.stringKey(StatusCode.ERROR.name),
-                                "/@GET(public/comics/$comicId"
+                                "/@GET/flight"
                             )
                             span.recordException(e, attributes)
                         }
                         .collect {
-                            displayBookData.value = it
-                            setCharacterAdapterData(it.data.results[0].characterImages)
+                            displayFlightData.value = it
                             loadingObservableField.set(false)
                             span.addEvent("Api data loaded: $it")
                         }
@@ -70,17 +77,7 @@ class MovieDetailViewModel @Inject constructor(
         }
     }
 
-    fun setCharacterAdapterData(characterImages: List<ImageThumbUri>) {
-        val viewModels = characterImages.map { appFactory.createCharacterAdapter(it) }
-        adapter.setDataBoundAdapter(viewModels)
-        characterAdapterObservableField.set(adapter)
-    }
-
     override fun showExceptionMessage(message: String?) {
         showErrorMessage.value = message
     }
-
-    fun getCharacterAdapter(): ObservableField<CommonAdapter> = characterAdapterObservableField
-
-    fun isLoading(): ObservableField<Boolean> = loadingObservableField
 }
