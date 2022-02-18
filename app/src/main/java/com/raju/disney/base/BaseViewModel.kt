@@ -7,15 +7,15 @@ import com.raju.disney.util.ApiExceptionUtils.getExceptionMessage
 
 open class BaseViewModel : ViewModel() {
 
-  protected fun handleException(
-      TAG: String,
-      e: Throwable,
-      loadingObservableField: ObservableField<Boolean>
-  ) {
-    Log.e(TAG, """${e.message}""")
-    loadingObservableField.set(false)
-    showExceptionMessage(getExceptionMessage(e))
-  }
+    protected fun handleException(
+        TAG: String,
+        e: Throwable,
+        loadingObservableField: ObservableField<Boolean>
+    ) {
+        Log.e(TAG, """${e.message}""")
+        loadingObservableField.set(false)
+        showExceptionMessage(getExceptionMessage(e))
+    }
 
-  open fun showExceptionMessage(message: String?) {}
+    open fun showExceptionMessage(message: String?) {}
 }

@@ -12,12 +12,13 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
+import io.opentelemetry.context.Context
 import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.context.propagation.TextMapPropagator
+import io.opentelemetry.context.propagation.TextMapSetter
 import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter
 import io.opentelemetry.exporter.logging.LoggingSpanExporter
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
-import io.opentelemetry.exporter.zipkin.ZipkinSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
@@ -40,19 +41,17 @@ object OtelConfiguration {
             .setEndpoint("http://192.168.0.102:14250")
             .setTimeout(30, TimeUnit.SECONDS)
             .build()
-//        val endpoint = String.format("http://%s:%s/api/v2/spans", "192.168.0.102", "9411")
-//        val zipkinExporter = ZipkinSpanExporter.builder().setEndpoint(endpoint).build()
-//        val oltpExporter =
-//            OtlpGrpcSpanExporter.builder().setEndpoint("http://192.168.0.102:4317")
-//                .setTimeout(2, TimeUnit.SECONDS).build()
+
+        val oltpExporter =
+            OtlpGrpcSpanExporter.builder().setEndpoint("http://192.168.0.102:4317")
+                .setTimeout(2, TimeUnit.SECONDS).build()
         val serviceNameResource =
             Resource.create(Attributes.of(ResourceAttributes.SERVICE_NAME, "DisneyAndroid"))
 
         // Set to process the spans by the Jaeger Exporter
         val tracerProvider = SdkTracerProvider.builder()
             .addSpanProcessor(SimpleSpanProcessor.create(jaegerExporter))
-//            .addSpanProcessor(SimpleSpanProcessor.create(oltpExporter))
-//            .addSpanProcessor(SimpleSpanProcessor.create(zipkinExporter))
+            .addSpanProcessor(SimpleSpanProcessor.create(oltpExporter))
             .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
             .setResource(Resource.getDefault().merge(serviceNameResource))
             .build()
@@ -72,7 +71,7 @@ object OtelConfiguration {
         return init()
     }
 
-    fun getTracer(tracerName: String): Tracer {
+    fun getTracer(tracerName: String = "Android"): Tracer {
         return init().getTracer(tracerName)
     }
 
@@ -82,9 +81,18 @@ object OtelConfiguration {
 
     fun Tracer.createChildSpan(childSpanName: String, parentSpan: Span?): Span =
         this.spanBuilder(childSpanName)
-            .setParent(io.opentelemetry.context.Context.current().with(parentSpan))
+            .setParent(Context.current().with(parentSpan))
             .setSpanKind(SpanKind.CLIENT).startSpan()
 
-    fun getTextMapPropagator(): TextMapPropagator = init().propagators.textMapPropagator
+    private fun getTextMapPropagator(): TextMapPropagator = init().propagators.textMapPropagator
+
+    fun injectSpanContext(): MutableMap<String, String> {
+        val map: MutableMap<String, String> = hashMapOf()
+        val setter = TextMapSetter<MutableMap<String, String>> { map1, key, value ->
+            map1?.set(key, value)
+        }
+        getTextMapPropagator().inject(Context.current(), map, setter)
+        return map
+    }
 
 }

@@ -2,6 +2,7 @@ package com.raju.disney.ui.fragment
 
 import TOAST
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,13 +22,16 @@ import kotlinx.android.synthetic.main.fragment_movie_detail.*
 @AndroidEntryPoint
 class MovieDetailFragment : BaseFragment() {
 
-    private val tracer: Tracer = OtelConfiguration.getTracer("app:MainActivity")
+    private val tracer: Tracer = OtelConfiguration.getTracer()
+    private val parentSpan = tracer.createSpan("MovieDetailFragment:api:request")
+
     private val viewModel: MovieDetailViewModel by viewModels()
     private lateinit var binding: FragmentMovieDetailBinding
-    private val parentSpan = tracer.createSpan("MovieDetailFragment:api:request")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("Raju", "TraceId: "+parentSpan.spanContext.traceId)
+        Log.e("Raju", "spanId: "+parentSpan.spanContext.spanId)
         try {
             parentSpan.makeCurrent().use {
                 viewModel.fetchBook(1308)
@@ -35,6 +39,7 @@ class MovieDetailFragment : BaseFragment() {
                 viewModel.showErrorMessage.observeEvent(this, this::showErrorMessage)
             }
         } finally {
+            Log.e("Raju", "End")
             parentSpan.end()
         }
     }

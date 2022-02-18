@@ -1,6 +1,5 @@
 package com.raju.disney.ui.activity.viewmodel
 
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.raju.disney.api.repository.FlightRepository
@@ -15,9 +14,6 @@ import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.context.Context
-import io.opentelemetry.context.propagation.ContextPropagators
-import io.opentelemetry.context.propagation.TextMapSetter
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -29,9 +25,7 @@ const val TAG: String = "FlightActivityViewModel"
 class FlightActivityViewModel @Inject constructor(private val repository: FlightRepository) :
     BaseViewModel() {
 
-    private val otelConfiguration = OtelConfiguration.getOpenTelemetry()
-    private val tracer: Tracer = otelConfiguration.getTracer("FlightActivity")
-    private val span: Span = tracer.createSpan("FlightActivityViewModel:api:http_request")
+    private val tracer: Tracer = OtelConfiguration.getTracer("FlightActivity")
 
     private val loadingObservableField: ObservableField<Boolean> = ObservableField()
     val showErrorMessage: SingleLiveEvent<String?> by lazy { SingleLiveEvent() }
@@ -39,22 +33,12 @@ class FlightActivityViewModel @Inject constructor(private val repository: Flight
 
     fun fetchFlightData() {
         viewModelScope.launch {
+            val span: Span = tracer.createSpan("FlightActivityViewModel:api:http_request")
             try {
                 span.makeCurrent().use {
-                    val propagators: ContextPropagators = otelConfiguration.propagators
-                    val textMapPropagator = propagators.textMapPropagator
-
-                    val map: MutableMap<String, String> = HashMap()
-                    val setter1 = TextMapSetter<MutableMap<String, String>> { map, key, value ->
-                        map?.set(
-                            key,
-                            value
-                        )
-                    }
-                    textMapPropagator.inject(Context.current(), map, setter1)
                     span.addEvent("Loading api data")
                     loadingObservableField.set(true)
-                    repository.getFlightData(map)
+                    repository.getFlightData(OtelConfiguration.injectSpanContext())
                         .catch { e ->
                             handleException(TAG, e, loadingObservableField)
                             val attributes = Attributes.of(
