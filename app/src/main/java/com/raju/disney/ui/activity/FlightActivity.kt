@@ -15,44 +15,46 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.opentelemetry.api.trace.Tracer
 import kotlinx.android.synthetic.main.activity_flight.*
 
-
 @AndroidEntryPoint
 class FlightActivity : BaseActivity() {
 
-    private val tracer: Tracer = OtelConfiguration.getTracer("FlightActivity")
-    private val parentSpan = tracer.createSpan("FlightActivity:api:request")
+//    private val tracer: Tracer = OtelConfiguration.getTracer("FlightActivity")
+//    private val parentSpan = tracer.createSpan("FlightActivity:api:request")
 
     private val viewModel: FlightActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flight)
-        Log.e("Raju", "TraceId: Flight " + parentSpan.spanContext.traceId)
-        Log.e("Raju", "spanId: " + parentSpan.spanContext.spanId)
-        try {
-            parentSpan.makeCurrent().use {
-                viewModel.fetchFlightData()
-                viewModel.displayFlightData.observeEvent(this, this::showUser)
-                viewModel.showErrorMessage.observeEvent(this, this::showErrorMessage)
-            }
-        } finally {
-            parentSpan.end()
-        }
+//        Log.e("Raju", "TraceId: Flight " + parentSpan.spanContext.traceId)
+//        Log.e("Raju", "spanId: " + parentSpan.spanContext.spanId)
+        viewModel.fetchFlightData()
+        viewModel.displayFlightData.observeEvent(this, this::showUser)
+        viewModel.showErrorMessage.observeEvent(this, this::showErrorMessage)
+//        try {
+//            parentSpan.makeCurrent().use {
+//
+//            }
+//        } finally {
+//            parentSpan.end()
+//        }
     }
 
     private fun showUser(flight: FlightData) {
-        val span = tracer.createChildSpan("setDataTo:ui", parentSpan)
-        try {
-            span.makeCurrent().use {
-                val result = StringBuilder()
-                flight.forEach {
-                    result.append(it).append("\n\n")
-                }
-                tvFlightData.text = result
-            }
-        } finally {
-            span.end()
+        val result = StringBuilder()
+        flight.forEach {
+            result.append(it).append("\n\n")
         }
+        tvFlightData.text = result
+
+//        val span = tracer.createChildSpan("setDataTo:ui", parentSpan)
+//        try {
+//            span.makeCurrent().use {
+//
+//            }
+//        } finally {
+//            span.end()
+//        }
     }
 
 

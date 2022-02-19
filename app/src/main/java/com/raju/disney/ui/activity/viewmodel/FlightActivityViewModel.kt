@@ -1,5 +1,6 @@
 package com.raju.disney.ui.activity.viewmodel
 
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.raju.disney.api.repository.FlightRepository
@@ -25,15 +26,13 @@ const val TAG: String = "FlightActivityViewModel"
 class FlightActivityViewModel @Inject constructor(private val repository: FlightRepository) :
     BaseViewModel() {
 
-    private val tracer: Tracer = OtelConfiguration.getTracer("FlightActivity")
-
     private val loadingObservableField: ObservableField<Boolean> = ObservableField()
     val showErrorMessage: SingleLiveEvent<String?> by lazy { SingleLiveEvent() }
     val displayFlightData: SingleLiveEvent<FlightData> by lazy { SingleLiveEvent() }
 
     fun fetchFlightData() {
         viewModelScope.launch {
-            val span: Span = tracer.createSpan("FlightActivityViewModel:api:http_request")
+            val span = otel.startWorkflow("fetchFlightData:http:request")
             try {
                 span.makeCurrent().use {
                     span.addEvent("Loading api data")
@@ -61,5 +60,11 @@ class FlightActivityViewModel @Inject constructor(private val repository: Flight
 
     override fun showExceptionMessage(message: String?) {
         showErrorMessage.value = message
+    }
+
+    override fun onCleared() {
+        Log.e("Raju", "Cleared")
+        super.onCleared()
+        span.end()
     }
 }

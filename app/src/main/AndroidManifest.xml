@@ -29,11 +29,11 @@
             android:name=".ui.activity.MainActivity"
             android:exported="false" />
 
-        <provider
-            android:name=".appstartup.StartupTimeProvider"
-            android:authorities="${applicationId}.startup-time-provider"
-            android:exported="false"
-            android:initOrder="2147483647" />
+<!--        <provider-->
+<!--            android:name=".appstartup.StartupTimeProvider"-->
+<!--            android:authorities="${applicationId}.startup-time-provider"-->
+<!--            android:exported="false"-->
+<!--            android:initOrder="2147483647" />-->
     </application>
 
 </manifest>

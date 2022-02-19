@@ -47,7 +47,7 @@ class MovieDetailViewModelTest {
   fun fetchBookData() {
     testCoroutineRule.runBlockingTest {
       Mockito.doReturn(bookDataFlow).`when`(repository).getBookData(1308)
-      testObject.fetchBook(1308)
+      testObject.fetchBook(1308, parentSpan)
       assertEquals(true, testObject.isLoading().get())
     }
   }
