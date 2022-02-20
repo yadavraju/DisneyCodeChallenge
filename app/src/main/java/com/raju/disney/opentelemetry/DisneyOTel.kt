@@ -97,17 +97,7 @@ open class DisneyOTel internal constructor(
         textMapPropagator?.inject(Context.current(), map, textMapSetter)
         return map
     }
-    /**
-     * Add a custom exception to Disney otel monitoring. This can be useful for tracking custom error
-     * handling in your application.
-     *
-     *
-     * This event will be turned into a Span and sent to the Disney ingest along with other, auto-generated
-     * spans.
-     *
-     * @param throwable  A [Throwable] associated with this event.
-     * @param attributes Any [Attributes] to associate with the event.
-     */
+
     /**
      * Add a custom exception to Disney otel monitoring. This can be useful for tracking custom error
      * handling in your application.
