@@ -14,12 +14,12 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dahboard)
         btnTraceFlight.setOnClickListener {
-            val span = otel.startWorkflow("open:instrumented:api")
+            val span = oTel.startWorkflow("open:instrumented:api")
             startActivity(Intent(this, FlightActivity::class.java))
             span.end()
         }
         btnTraceMarvelApi.setOnClickListener {
-            val span = otel.startWorkflow("open:not:instrumented:api")
+            val span = oTel.startWorkflow("open:not:instrumented:api")
             startActivity(Intent(this, MainActivity::class.java))
             span.end()
         }

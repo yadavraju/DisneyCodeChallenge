@@ -11,7 +11,6 @@ import bindSrcUrl
 import com.raju.disney.base.BaseFragment
 import com.raju.disney.data.BookData
 import com.raju.disney.databinding.FragmentMovieDetailBinding
-import com.raju.disney.opentelemetry.DisneyOtel
 import com.raju.disney.ui.fragment.viewmodel.MovieDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_movie_detail.*
@@ -63,7 +62,7 @@ class MovieDetailFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.w("Raju", "sessionId: " + otel.otelSessionId)
+        Log.w("Raju", "sessionId: " + otel.oTelSessionId)
     }
 
     override fun onDestroyView() {

@@ -1,8 +1,8 @@
 package com.raju.disney.base
 
 import androidx.appcompat.app.AppCompatActivity
-import com.raju.disney.opentelemetry.DisneyOtel
+import com.raju.disney.opentelemetry.DisneyOTel
 
 abstract class BaseActivity : AppCompatActivity() {
-    val otel = DisneyOtel.getInstance()
+    val oTel = DisneyOTel.instance
 }

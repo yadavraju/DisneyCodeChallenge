@@ -18,7 +18,7 @@ class FlightActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flight)
-        val span = otel.startWorkflow("open:FlightActivity:fetchFlightData")
+        val span = oTel.startWorkflow("open:FlightActivity:fetchFlightData")
         viewModel.fetchFlightData()
         viewModel.displayFlightData.observeEvent(this, this::showUser)
         viewModel.showErrorMessage.observeEvent(this, this::showErrorMessage)

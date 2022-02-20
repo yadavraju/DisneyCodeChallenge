@@ -36,7 +36,7 @@ class FlightActivityViewModel @Inject constructor(private val repository: Flight
                         AttributeKey.stringKey(StatusCode.ERROR.name),
                         "/@GET/flight"
                     )
-                    otel.addDisneyOtelException(e, attributes)
+                    otel.addException(e, attributes)
                 }
                 .collect {
                     displayFlightData.value = it

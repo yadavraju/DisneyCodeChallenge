@@ -5,6 +5,7 @@ import com.raju.disney.BuildConfig
 import com.raju.disney.api.BookApi
 import com.raju.disney.api.FLIGHT_BASE_URL
 import com.raju.disney.api.FlightApi
+import com.raju.disney.opentelemetry.DisneyOTel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,6 +55,7 @@ class NetworkModule {
             Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(gsonConverterFactory)
+                .callFactory(DisneyOTel.instance.createRumOkHttpCallFactory(httpClient))
                 .client(httpClient)
                 .build()
         return retrofit.create(BookApi::class.java)
@@ -70,6 +72,7 @@ class NetworkModule {
                 .baseUrl(FLIGHT_BASE_URL)
                 .addConverterFactory(gsonConverterFactory)
                 .client(httpClient)
+                .callFactory(DisneyOTel.instance.createRumOkHttpCallFactory(httpClient))
                 .build()
         return retrofit.create(FlightApi::class.java)
     }
