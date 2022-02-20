@@ -1,29 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
     tools:context=".ui.activity.DashboardActivity">
 
-    <Button
-        android:id="@+id/btnTraceFlight"
+    <LinearLayout
+        android:id="@+id/button_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/trace_with_backend_instrumented"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btnTraceMarvelApi"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnTraceMarvelApi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/trace_without_backend_instrumented"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnTraceFlight" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btnTraceFlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trace_with_backend_instrumented" />
+
+        <Button
+            android:id="@+id/btnTraceMarvelApi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trace_without_backend_instrumented" />
+
+        <Button
+            android:id="@+id/http_me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/http_me_up" />
+
+        <Button
+            android:id="@+id/crash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/crash" />
+
+        <Button
+            android:id="@+id/http_me_not_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/http_not_found" />
+
+        <Button
+            android:id="@+id/http_me_bad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/http_me_bad" />
+
+        <TextView
+            android:id="@+id/session_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:enabled="true"
+            android:focusable="true"
+            android:longClickable="true"
+            android:textColor="@color/White_100"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/http_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/White_100" />
+
+        <LinearLayout
+            android:id="@+id/button_box1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_to_custom_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/custom_tab" />
+
+            <LinearLayout
+                android:id="@+id/freezy_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_freeze"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/freeze" />
+
+                <Button
+                    android:id="@+id/button_work"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/work_it" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

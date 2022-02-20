@@ -5,4 +5,11 @@
     <string name="character_title">Characters</string>
     <string name="trace_with_backend_instrumented">Trace With Backend Instrumented</string>
     <string name="trace_without_backend_instrumented">Trace Without Backend Instrumented</string>
+    <string name="crash">Crash</string>
+    <string name="http_not_found">Http not found</string>
+    <string name="http_me_bad">Http Error</string>
+    <string name="freeze">Freeze!</string>
+    <string name="work_it">Work it!</string>
+    <string name="custom_tab">Chrome</string>
+    <string name="http_me_up">Http Me</string>
 </resources>

@@ -73,6 +73,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.8.0-alpha04'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation("androidx.browser:browser:1.4.0")
 
     // Architecture Components
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
