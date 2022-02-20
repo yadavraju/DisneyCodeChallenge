@@ -1,24 +1,18 @@
 package com.raju.disney.opentelemetry;
 
-import static com.raju.disney.opentelemetry.DisneyOtel.LOG_TAG;
-
 import android.app.Application;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
@@ -27,15 +21,12 @@ import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter;
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
-import io.opentelemetry.exporter.zipkin.ZipkinSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.common.Clock;
-import io.opentelemetry.sdk.common.CompletableResultCode;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.SdkTracerProviderBuilder;
 import io.opentelemetry.sdk.trace.SpanLimits;
-import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
@@ -61,7 +52,7 @@ public class OtelInitializer {
         long startTimeNanos = timingClock.now();
 
         OtlpGrpcSpanExporter oltpExporter =
-                OtlpGrpcSpanExporter.builder().setEndpoint("http://192.168.0.102:4317")
+                OtlpGrpcSpanExporter.builder().setEndpoint(config.getOltpExporterEndPoint())
                         .setTimeout(2, TimeUnit.SECONDS).build();
         initializationEvents.add(new OtelInitializer.InitializationEvent("OtlpGrpcSpanExporterInitialized", timingClock.now()));
 
@@ -135,7 +126,7 @@ public class OtelInitializer {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             JaegerGrpcSpanExporter jaegerExporter = JaegerGrpcSpanExporter.builder()
-                    .setEndpoint("http://192.168.0.102:14250")
+                    .setEndpoint(config.getJaegerExporterEndPoint())
                     .setTimeout(30, TimeUnit.SECONDS)
                     .build();
             tracerProviderBuilder
@@ -152,13 +143,12 @@ public class OtelInitializer {
         Span span = tracer.spanBuilder("DisneyOtel.initialize")
                 .setParent(Context.current().with(overallAppStart))
                 .setStartTimestamp(startTimeNanos, TimeUnit.NANOSECONDS)
-                .setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APPSTART)
+                .setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APP_START)
                 .startSpan();
 
         String configSettings = "[debug:" + config.isDebugEnabled() + "," +
                 "crashReporting:" + true + "," +
-                "anrReporting:" + config.isAnrDetectionEnabled() + "," +
-                "slowRenderingDetector:" + config.isSlowRenderingDetectionEnabled() + "]";
+                "anrReporting:" + config.isAnrDetectionEnabled() + "]";
         span.setAttribute("config_settings", configSettings);
 
         for (OtelInitializer.InitializationEvent initializationEvent : initializationEvents) {

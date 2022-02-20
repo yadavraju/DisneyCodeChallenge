@@ -55,7 +55,7 @@ class OtelFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCa
     public void onFragmentViewCreated(@NonNull FragmentManager fm, @NonNull Fragment f, @NonNull View v, @Nullable Bundle savedInstanceState) {
         super.onFragmentViewCreated(fm, f, v, savedInstanceState);
         getTracer(f)
-                .startSpanIfNoneInProgress("Restored")
+                .startSpanIfNoneInProgress("Restored" + f.getClass().getName())
                 .addEvent("fragmentViewCreated");
     }
 
@@ -69,7 +69,7 @@ class OtelFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCa
     public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
         super.onFragmentResumed(fm, f);
         getTracer(f)
-                .startSpanIfNoneInProgress("Resumed")
+                .startSpanIfNoneInProgress("Resumed:" + f.getClass().getName())
                 .addEvent("fragmentResumed")
                 .addPreviousScreenAttribute()
                 .endActiveSpan();
@@ -100,7 +100,7 @@ class OtelFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCa
     public void onFragmentViewDestroyed(@NonNull FragmentManager fm, @NonNull Fragment f) {
         super.onFragmentViewDestroyed(fm, f);
         getTracer(f)
-                .startSpanIfNoneInProgress("ViewDestroyed")
+                .startSpanIfNoneInProgress("ViewDestroyed:" + f.getClass().getName())
                 .addEvent("fragmentViewDestroyed")
                 .endActiveSpan();
     }
@@ -110,7 +110,7 @@ class OtelFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCa
         super.onFragmentDestroyed(fm, f);
         //note: this might not get called if the dev has checked "retainInstance" on the fragment
         getTracer(f)
-                .startSpanIfNoneInProgress("Destroyed")
+                .startSpanIfNoneInProgress("Destroyed:" + f.getClass().getName())
                 .addEvent("fragmentDestroyed");
     }
 
@@ -119,7 +119,7 @@ class OtelFragmentLifecycleCallbacks extends FragmentManager.FragmentLifecycleCa
         super.onFragmentDetached(fm, f);
         // this is a terminal operation, but might also be the only thing we see on app getting killed, so
         getTracer(f)
-                .startSpanIfNoneInProgress("Detached")
+                .startSpanIfNoneInProgress("Detached:" + f.getClass().getName())
                 .addEvent("fragmentDetached")
                 .endActiveSpan();
     }

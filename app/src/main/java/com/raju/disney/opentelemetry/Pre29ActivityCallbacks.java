@@ -60,7 +60,7 @@ class Pre29ActivityCallbacks implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
         getTracer(activity)
-                .startSpanIfNoneInProgress("Resumed")
+                .startSpanIfNoneInProgress("Resumed:" + activity.getClass().getSimpleName())
                 .addEvent("activityResumed")
                 .addPreviousScreenAttribute()
                 .endSpanForActivityResumed();
@@ -70,7 +70,7 @@ class Pre29ActivityCallbacks implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
         getTracer(activity)
-                .startSpanIfNoneInProgress("Paused")
+                .startSpanIfNoneInProgress("Paused:" + activity.getClass().getSimpleName())
                 .addEvent("activityPaused")
                 .endActiveSpan();
         visibleScreenTracker.activityPaused(activity);
@@ -84,7 +84,7 @@ class Pre29ActivityCallbacks implements Application.ActivityLifecycleCallbacks {
             }
         }
         getTracer(activity)
-                .startSpanIfNoneInProgress("Stopped")
+                .startSpanIfNoneInProgress("Stopped:" + activity.getClass().getSimpleName())
                 .addEvent("activityStopped")
                 .endActiveSpan();
     }
@@ -97,7 +97,7 @@ class Pre29ActivityCallbacks implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
         getTracer(activity)
-                .startSpanIfNoneInProgress("Destroyed")
+                .startSpanIfNoneInProgress("Destroyed:" + activity.getClass().getSimpleName())
                 .addEvent("activityDestroyed")
                 .endActiveSpan();
     }

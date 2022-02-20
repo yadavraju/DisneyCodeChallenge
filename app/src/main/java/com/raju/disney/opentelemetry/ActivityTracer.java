@@ -49,12 +49,12 @@ class ActivityTracer {
         // the activity class name as the base of the span name.
         boolean isColdStart = initialAppActivity.get() == null;
         if (isColdStart) {
-            return createSpanWithParent("Created", appStartupTimer.getStartupSpan());
+            return createSpanWithParent("Created:" + activityName, appStartupTimer.getStartupSpan());
         }
         if (activityName.equals(initialAppActivity.get())) {
-            return createAppStartSpan("warm");
+            return createAppStartSpan("warm:" + activityName);
         }
-        return createSpan("Created");
+        return createSpan("Created:" + activityName);
     }
 
     ActivityTracer initiateRestartSpanIfNecessary(boolean multiActivityApp) {
@@ -71,16 +71,16 @@ class ActivityTracer {
         //Note: in a multi-activity application, navigating back to the first activity can trigger
         //this, so it would not be ideal to call it an AppStart.
         if (!multiActivityApp && activityName.equals(initialAppActivity.get())) {
-            return createAppStartSpan("hot");
+            return createAppStartSpan("hot:" + activityName);
         }
-        return createSpan("Restarted");
+        return createSpan("Restarted:" + activityName);
     }
 
     private Span createAppStartSpan(String startType) {
         Span span = createSpan(APP_START_SPAN_NAME);
         span.setAttribute(DisneyOtel.START_TYPE_KEY, startType);
         //override the component to be appstart
-        span.setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APPSTART);
+        span.setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APP_START);
         return span;
     }
 

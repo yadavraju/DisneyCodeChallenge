@@ -5,13 +5,15 @@ public class Config {
     private final boolean debugEnabled;
     private final String applicationName;
     private final boolean anrDetectionEnabled;
-    private final boolean slowRenderingDetectionEnabled;
+    private final String oltpExporterEndPoint;
+    private final String jaegerExporterEndPoint;
 
     private Config(Builder builder) {
         this.debugEnabled = builder.debugEnabled;
         this.applicationName = builder.applicationName;
         this.anrDetectionEnabled = builder.anrDetectionEnabled;
-        this.slowRenderingDetectionEnabled = builder.slowRenderingDetectionEnabled;
+        this.oltpExporterEndPoint = builder.oltpExporterEndPoint;
+        this.jaegerExporterEndPoint = builder.jaegerExporterEndPoint;
     }
 
     public boolean isDebugEnabled() {
@@ -30,19 +32,22 @@ public class Config {
         return anrDetectionEnabled;
     }
 
-    public boolean isSlowRenderingDetectionDisabled() {
-        return !isSlowRenderingDetectionEnabled();
+    public String getOltpExporterEndPoint() {
+        return oltpExporterEndPoint;
     }
 
-    public boolean isSlowRenderingDetectionEnabled() {
-        return slowRenderingDetectionEnabled;
+    public String getJaegerExporterEndPoint() {
+        return jaegerExporterEndPoint;
     }
+
 
     public static class Builder {
         public boolean slowRenderingDetectionEnabled = true;
         public boolean anrDetectionEnabled = true;
         private boolean debugEnabled = false;
         private String applicationName;
+        private String oltpExporterEndPoint;
+        private String jaegerExporterEndPoint;
 
         public Config build() {
             return new Config(this);
@@ -63,8 +68,13 @@ public class Config {
             return this;
         }
 
-        public Builder disableSlowRenderingDetection() {
-            slowRenderingDetectionEnabled = false;
+        public Builder oltpExporterEndPoint(String oltpExporterEndPoint) {
+            this.oltpExporterEndPoint = oltpExporterEndPoint;
+            return this;
+        }
+
+        public Builder jaegerExporterEndPoint(String jaegerExporterEndPoint) {
+            this.jaegerExporterEndPoint = jaegerExporterEndPoint;
             return this;
         }
     }

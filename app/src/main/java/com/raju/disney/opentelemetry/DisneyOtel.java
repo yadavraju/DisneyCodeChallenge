@@ -35,18 +35,13 @@ public class DisneyOtel {
     static final AttributeKey<String> ERROR_MESSAGE_KEY = stringKey("error.message");
     static final AttributeKey<String> WORKFLOW_NAME_KEY = stringKey("workflow.name");
     static final AttributeKey<String> START_TYPE_KEY = stringKey("start.type");
-    static final AttributeKey<Double> LOCATION_LATITUDE_KEY = doubleKey("location.lat");
-    static final AttributeKey<Double> LOCATION_LONGITUDE_KEY = doubleKey("location.long");
 
-    static final String COMPONENT_APPSTART = "appstart";
+    static final String COMPONENT_APP_START = "appstart";
     static final String COMPONENT_CRASH = "crash";
     static final String COMPONENT_ERROR = "error";
     static final String COMPONENT_UI = "ui";
     static final String LOG_TAG = "DisneyOtel";
     static final String DISNEY_TRACER_NAME = "DisneyOtel";
-
-    static final AttributeKey<String> LINK_TRACE_ID_KEY = stringKey("link.traceId");
-    static final AttributeKey<String> LINK_SPAN_ID_KEY = stringKey("link.spanId");
 
     private static DisneyOtel INSTANCE;
 

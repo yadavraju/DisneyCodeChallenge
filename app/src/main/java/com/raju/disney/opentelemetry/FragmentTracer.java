@@ -28,7 +28,7 @@ class FragmentTracer {
     }
 
     FragmentTracer startFragmentCreation() {
-        activeSpan.startSpan(() -> createSpan("Created"));
+        activeSpan.startSpan(() -> createSpan("Created: " + fragmentName));
         return this;
     }
 

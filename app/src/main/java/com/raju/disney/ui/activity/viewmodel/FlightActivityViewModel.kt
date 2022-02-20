@@ -1,20 +1,15 @@
 package com.raju.disney.ui.activity.viewmodel
 
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.raju.disney.api.repository.FlightRepository
 import com.raju.disney.base.BaseViewModel
 import com.raju.disney.data.FlightData
-import com.raju.disney.opentelemetry.OtelConfiguration
-import com.raju.disney.opentelemetry.OtelConfiguration.createSpan
 import com.raju.disney.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.StatusCode
-import io.opentelemetry.api.trace.Tracer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -33,38 +28,26 @@ class FlightActivityViewModel @Inject constructor(private val repository: Flight
     fun fetchFlightData() {
         viewModelScope.launch {
             val span = otel.startWorkflow("fetchFlightData:http:request")
-            try {
-                span.makeCurrent().use {
-                    span.addEvent("Loading api data")
-                    loadingObservableField.set(true)
-                    repository.getFlightData(OtelConfiguration.injectSpanContext())
-                        .catch { e ->
-                            handleException(TAG, e, loadingObservableField)
-                            val attributes = Attributes.of(
-                                AttributeKey.stringKey(StatusCode.ERROR.name),
-                                "/@GET/flight"
-                            )
-                            span.recordException(e, attributes)
-                        }
-                        .collect {
-                            displayFlightData.value = it
-                            loadingObservableField.set(false)
-                            span.addEvent("Api data loaded: $it")
-                        }
+            loadingObservableField.set(true)
+            repository.getFlightData(otel.injectSpanContext())
+                .catch { e ->
+                    handleException(TAG, e, loadingObservableField)
+                    val attributes = Attributes.of(
+                        AttributeKey.stringKey(StatusCode.ERROR.name),
+                        "/@GET/flight"
+                    )
+                    otel.addDisneyOtelException(e, attributes)
                 }
-            } finally {
-                span.end()
-            }
+                .collect {
+                    displayFlightData.value = it
+                    loadingObservableField.set(false)
+                    span.addEvent("Api data loaded: $it")
+                }
+            span.end()
         }
     }
 
     override fun showExceptionMessage(message: String?) {
         showErrorMessage.value = message
-    }
-
-    override fun onCleared() {
-        Log.e("Raju", "Cleared")
-        super.onCleared()
-        span.end()
     }
 }

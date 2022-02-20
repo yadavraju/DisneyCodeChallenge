@@ -21,7 +21,7 @@ class AppStartupTimer {
         }
         final Span appStart = tracer.spanBuilder("AppStart")
                 .setStartTimestamp(firstPossibleTimestamp, TimeUnit.NANOSECONDS)
-                .setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APPSTART)
+                .setAttribute(DisneyOtel.COMPONENT_KEY, DisneyOtel.COMPONENT_APP_START)
                 .setAttribute(DisneyOtel.START_TYPE_KEY, "cold")
                 .startSpan();
         overallAppStartSpan = appStart;

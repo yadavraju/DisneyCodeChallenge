@@ -36,38 +36,35 @@ class MovieDetailViewModel @Inject constructor(
 
     fun fetchBook(comicId: Int) {
         viewModelScope.launch {
-            val childSpan = otel.startWorkflow("fetchBook:http:request")
-            try {
-                childSpan.makeCurrent().use {
-                    childSpan.addEvent("Loading api data")
-                    loadingObservableField.set(true)
-                    repository
-                        .getBookData(comicId)
-                        .catch { e ->
-                            handleException(TAG, e, loadingObservableField)
-                            val attributes = Attributes.of(
-                                AttributeKey.stringKey(StatusCode.ERROR.name),
-                                "/@GET(public/comics/$comicId"
-                            )
-                            childSpan.recordException(e, attributes)
-                        }
-                        .collect {
-                            displayBookData.value = it
-                            setCharacterAdapterData(it.data.results[0].characterImages)
-                            loadingObservableField.set(false)
-                            childSpan.addEvent("Api data loaded: $it")
-                        }
+            val span = otel.startWorkflow("MovieDetailViewModel:fetchBook:Api:HttpRequest")
+            loadingObservableField.set(true)
+            repository
+                .getBookData(comicId)
+                .catch { e ->
+                    handleException(TAG, e, loadingObservableField)
+                    val attributes = Attributes.of(
+                        AttributeKey.stringKey(StatusCode.ERROR.name),
+                        "/@GET(public/comics/$comicId"
+                    )
+                    span.recordException(e, attributes)
                 }
-            } finally {
-                childSpan.end()
-            }
+                .collect {
+                    displayBookData.value = it
+                    setCharacterAdapterData(it.data.results[0].characterImages, span)
+                    loadingObservableField.set(false)
+                    span.addEvent("Api data loaded: $it")
+                }
+            span.end()
         }
     }
 
-    private fun setCharacterAdapterData(characterImages: List<ImageThumbUri>) {
+    private fun setCharacterAdapterData(characterImages: List<ImageThumbUri>, span: Span) {
+        val startChildWorkflow =
+            otel.startChildWorkflow("MovieDetailViewModel:SetData:ToAdapter", span)
         val viewModels = characterImages.map { appFactory.createCharacterAdapter(it) }
         adapter.setDataBoundAdapter(viewModels)
         characterAdapterObservableField.set(adapter)
+        startChildWorkflow.end()
     }
 
     override fun showExceptionMessage(message: String?) {
