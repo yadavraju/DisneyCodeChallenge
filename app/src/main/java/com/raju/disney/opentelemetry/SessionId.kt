@@ -25,9 +25,7 @@ internal class SessionId constructor(private val clock: Clock = Clock.getDefault
                 //if this returns false, then another thread updated the value already.
                 if (value.compareAndSet(currentValue, newId)) {
                     createTimeNanos = clock.now()
-                    if (sessionIdChangeListener != null) {
-                        sessionIdChangeListener!!.onChange(currentValue, newId)
-                    }
+                    sessionIdChangeListener?.onChange(currentValue, newId)
                 }
                 return value.get()
             }
